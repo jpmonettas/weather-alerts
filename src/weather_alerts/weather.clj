@@ -29,7 +29,7 @@
   [{:keys [list] :as forecast} [min-temp max-temp]]
 
   (->> list
-       (keep (fn [{:keys [dt_txt main]}]
+       (keep (fn make-alert? [{:keys [dt_txt main]}]
                (let [{:keys [temp_min temp_max]} main]
                  (when-not (<= min-temp temp_min temp_max max-temp)
                    {:alert/type :temp

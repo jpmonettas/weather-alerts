@@ -3,9 +3,11 @@
             [ring.middleware.params :refer [wrap-params]]
             [compojure.core :refer [GET routes]]
             [hiccup.core :refer [html]]
-            [weather-alerts.weather :as weather]))
+            [weather-alerts.weather :as weather]
+            [clojure.core.cache.wrapped :as cache]))
 
-(defonce cache nil)
+(def cache-millis 10000) ;; 10 secs
+(defonce *cache (cache/ttl-cache-factory {} :ttl cache-millis))
 (defonce server nil)
 
 (defn render-alerts
@@ -51,9 +53,19 @@
         alerts (weather/alerts forecast (temp-range req))]
     (render-alerts alerts)))
 
+(defn cached-handle-alerts
+
+  "Wraps handle-alerts with a chache on location params"
+
+  [req]
+
+  (let [loc (location req)]
+    (cache/lookup-or-miss *cache loc (fn [_] (handle-alerts req)))))
+
+
 (def all-routes
   (routes
-   (GET "/alerts" [] handle-alerts)))
+   (GET "/alerts" [] cached-handle-alerts)))
 
 (defn start-server []
   (alter-var-root

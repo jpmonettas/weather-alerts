@@ -1,6 +1,7 @@
 (ns dev
   (:require [clojure.tools.namespace.repl :as tools-namespace-repl]
-            [weather-alerts.http-server :as wa-http]))
+            [weather-alerts.http-server :as wa-http]
+            [clojure.core.cache.wrapped :as cache]))
 
 (defn start-system []
   (println "Starting system...")
@@ -21,6 +22,7 @@
   (tools-namespace-repl/refresh :after 'dev/after-refresh))
 
 (defn clear-cache []
+  (cache/seed wa-http/*cache {})
   (println "Cache cleared."))
 
 
@@ -28,8 +30,13 @@
 
   ;; http://localhost:8080/alerts?lat=-34.90328&lon=-56.18816&min-temp=20&max-temp=25
 
-  (wa-http/handle-alerts user/r)
+  (wa-http/handle-alerts {:query-params {"lat" "-34.90328",
+                                         "lon" "-56.18816",
+                                         "min-temp" "20",
+                                         "max-temp" "25"},
+                          :uri "/alerts",
+                          :request-method :get})
 
-  user/f
+  user/r
 
   )
