@@ -26,10 +26,10 @@
 
 (comment
 
-  http://localhost:8080/alerts?lat=-34.90328&lon=-56.18816&min-temp=20&max-temp=25
+  ;; http://localhost:8080/alerts?lat=-34.90328&lon=-56.18816&min-temp=20&max-temp=25
 
   (wa-http/handle-alerts user/r)
 
-
   user/f
+
   )

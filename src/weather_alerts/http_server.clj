@@ -8,7 +8,11 @@
 (defonce cache nil)
 (defonce server nil)
 
-(defn render-alerts [alerts]
+(defn render-alerts
+
+  "Render ALERTS into html"
+
+  [alerts]
   (html [:html
          [:body
           [:h1 "Alerts"]
@@ -20,15 +24,28 @@
               [:div (str "Min temp : " temp-min)]
               [:div (str "Max temp : " temp-max)]])]]]))
 
-(defn location [{:keys [query-params]}]
+(defn location
+
+  "Parse location from the request"
+
+  [{:keys [query-params]}]
   [(parse-double (get query-params "lat"))
    (parse-double (get query-params "lon"))])
 
-(defn temp-range [{:keys [query-params]}]
+(defn temp-range
+
+  "Parse temperature range from the request"
+
+  [{:keys [query-params]}]
   [(parse-double (get query-params "min-temp"))
    (parse-double (get query-params "max-temp"))])
 
-(defn handle-alerts [req]
+(defn handle-alerts
+
+  "Handle requests to /alerts"
+
+  [req]
+
   (let [loc (location req)
         forecast (weather/get-weather-forecast loc)
         alerts (weather/alerts forecast (temp-range req))]
