@@ -46,10 +46,9 @@
 
   "Handle requests to /alerts"
 
-  [req]
+  [loc req]
 
-  (let [loc (location req)
-        forecast (weather/get-weather-forecast loc)
+  (let [forecast (weather/get-weather-forecast loc)
         alerts (weather/alerts forecast (temp-range req))]
     (render-alerts alerts)))
 
@@ -60,7 +59,7 @@
   [req]
 
   (let [loc (location req)]
-    (cache/lookup-or-miss *cache loc (fn [_] (handle-alerts req)))))
+    (cache/lookup-or-miss *cache loc (fn [_] (handle-alerts loc req)))))
 
 
 (def all-routes
